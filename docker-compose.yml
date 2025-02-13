@@ -1,0 +1,28 @@
+﻿volumes:
+  sqlserver_identity:
+    
+services:
+  jwt.api:
+    image: jwt.api
+    ports:
+      - "8080:8080"
+    build:
+      args:
+        ENVIRONMENT: "Development"  
+      context: .
+      dockerfile: JWT.Api/Dockerfile
+    depends_on:
+      - sql.identity
+      
+  sql.identity:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Passw0rd!
+    volumes:
+      - sqlserver_identity:/var/opt/mssql
+    restart: always
+    
+    
