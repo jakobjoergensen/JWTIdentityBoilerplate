@@ -3,12 +3,16 @@ using JWT.Api.Endpoints.Dtos;
 
 namespace JWT.Api.Endpoints;
 
+/// <summary>
+/// Example of limiting access by multiple roles
+/// </summary>
+
 internal class WeatherForecastEndpoint : EndpointWithoutRequest
 {
     public override void Configure()
     {
         Get("/WeatherForecast");
-        Roles(RoleNames.Admin, RoleNames.User);
+        Roles(Api.Roles.Admin, Api.Roles.User);
     }
 
     public override async Task HandleAsync(CancellationToken ct)

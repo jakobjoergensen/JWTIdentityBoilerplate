@@ -11,8 +11,8 @@ internal static class InitializeData
 
         string[] roleNames = 
         { 
-            RoleNames.Admin, 
-            RoleNames.User
+            Roles.Admin, 
+            Roles.User
         };
 
         foreach (var roleName in roleNames)
@@ -34,14 +34,14 @@ internal static class InitializeData
         var existingUser = await userManager.FindByEmailAsync(user.Email);
         if (existingUser != null)
         {
-            await AddToRole(userManager, existingUser, RoleNames.Admin);
+            await AddToRole(userManager, existingUser, Roles.Admin);
             return;
         }
 
         var seedResult = await userManager.CreateAsync(user, "Password123!");
         if (seedResult.Succeeded)
         {
-            await AddToRole(userManager, user, RoleNames.Admin);
+            await AddToRole(userManager, user, Roles.Admin);
         }
     }
 
@@ -62,7 +62,7 @@ internal static class InitializeData
             var existingUser = await userManager.FindByEmailAsync(user.Email!);
             if (existingUser != null)
             {
-                await AddToRole(userManager, existingUser, RoleNames.User);
+                await AddToRole(userManager, existingUser, Roles.User);
                 continue;
             }
 
@@ -70,7 +70,7 @@ internal static class InitializeData
 
             if (seedResult.Succeeded)
             {
-                await AddToRole(userManager, user, RoleNames.User);
+                await AddToRole(userManager, user, Roles.User);
             }
         }
     }

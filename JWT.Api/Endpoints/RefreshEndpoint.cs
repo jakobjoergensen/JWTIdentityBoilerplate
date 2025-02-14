@@ -24,6 +24,7 @@ internal class RefreshEndpoint(TokenManager tokenManager, UserManager<ApiUser> u
 
         if (principal?.Identity?.Name is null)
         {
+            Console.WriteLine("principal?.Identity?.Name is null");
             await SendUnauthorizedAsync(ct);
             return;
         }
@@ -31,6 +32,7 @@ internal class RefreshEndpoint(TokenManager tokenManager, UserManager<ApiUser> u
         var user = await _userManager.FindByNameAsync(principal.Identity.Name);
         if (user == null)
         {
+            Console.WriteLine("user == null");
             await SendUnauthorizedAsync(ct);
             return;
         }
@@ -47,6 +49,7 @@ internal class RefreshEndpoint(TokenManager tokenManager, UserManager<ApiUser> u
         
         if (validRefreshToken is null)
         {
+            Console.WriteLine("validRefreshToken is null");
             await SendUnauthorizedAsync(ct);
             return;
         }
@@ -58,7 +61,7 @@ internal class RefreshEndpoint(TokenManager tokenManager, UserManager<ApiUser> u
 
         var loginResponse = new LoginResponse(
             AccessToken: new JwtSecurityTokenHandler().WriteToken(token),
-            Expiration: token.ValidTo,
+            ExpiresAt: token.ValidTo,
             RefreshToken: validRefreshToken.RefreshToken);
 
         await SendOkAsync(loginResponse, ct);

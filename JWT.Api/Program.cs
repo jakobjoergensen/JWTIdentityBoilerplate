@@ -21,7 +21,8 @@ builder.Services
 
 builder.Services.AddScoped<TokenManager>();
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(Policies.SetPolicies);
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(x =>
     {

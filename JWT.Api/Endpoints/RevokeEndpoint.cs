@@ -3,6 +3,10 @@ using JWT.Api.Endpoints.Dtos;
 
 namespace JWT.Api.Endpoints;
 
+/// <summary>
+/// Example of limiting access by a role
+/// </summary>
+
 internal class RevokeEndpoint(IdentityContext identityContext) : Endpoint<RevokeRequest>
 {
     private readonly IdentityContext _identityContext = identityContext;
@@ -10,7 +14,7 @@ internal class RevokeEndpoint(IdentityContext identityContext) : Endpoint<Revoke
     public override void Configure()
     {
         Delete("/Revoke/{Id}");
-        Roles(RoleNames.Admin);
+        Roles(Api.Roles.Admin);
     }
 
     public override async Task HandleAsync(RevokeRequest req, CancellationToken ct)

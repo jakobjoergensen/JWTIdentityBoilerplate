@@ -38,7 +38,7 @@ internal class LoginEndpoint(TokenManager tokenManager, UserManager<ApiUser> use
 
         var loginResponse = new LoginResponse(
             AccessToken: new JwtSecurityTokenHandler().WriteToken(token),
-            Expiration: token.ValidTo,
+            ExpiresAt: token.ValidTo,
             RefreshToken: refreshToken);
 
         await SendOkAsync(loginResponse, ct);
