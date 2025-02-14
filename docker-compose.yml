@@ -3,12 +3,14 @@
     
 services:
   jwt.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     image: jwt.api
     ports:
       - "8080:8080"
     build:
       args:
-        ENVIRONMENT: "Development"  
+        ENVIRONMENT: Development
       context: .
       dockerfile: JWT.Api/Dockerfile
     depends_on:

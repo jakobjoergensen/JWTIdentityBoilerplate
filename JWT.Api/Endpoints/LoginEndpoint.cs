@@ -32,7 +32,7 @@ internal class LoginEndpoint(TokenManager tokenManager, UserManager<ApiUser> use
         user.RefreshTokens.Add(new RefreshTokens
         {
             RefreshToken = refreshToken,
-            Expiration = DateTime.UtcNow.AddMinutes(10)
+            ExpiresAt = DateTime.UtcNow.AddMinutes(10)
         });
 
         await _userManager.UpdateAsync(user);

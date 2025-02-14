@@ -16,8 +16,11 @@ public class IdentityContext : IdentityDbContext<ApiUser>
     {
         builder.Entity<RefreshTokens>().ToTable("RefreshTokens");
         builder.Entity<RefreshTokens>().HasKey(x => x.Id);
-        builder.Entity<RefreshTokens>().Property(x => x.RefreshToken).HasMaxLength(88).IsRequired();
-        builder.Entity<RefreshTokens>().Property(x => x.Expiration).IsRequired();
+        builder.Entity<RefreshTokens>().HasIndex(x => new { x.RefreshToken });
+
+        builder.Entity<RefreshTokens>().Property(x => x.RefreshToken).HasMaxLength(88).IsFixedLength().IsRequired();
+        builder.Entity<RefreshTokens>().Property(x => x.ExpiresAt).IsRequired();
+        builder.Entity<RefreshTokens>().Property(x => x.RevokedAt).IsRequired(false);
 
         base.OnModelCreating(builder);
     }

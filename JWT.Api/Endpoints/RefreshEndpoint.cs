@@ -40,7 +40,10 @@ internal class RefreshEndpoint(TokenManager tokenManager, UserManager<ApiUser> u
             .Where(u => u.Id == user.Id)
             .SelectMany(u => u.RefreshTokens).AsEnumerable() ?? Enumerable.Empty<RefreshTokens>();
 
-        var validRefreshToken = userRefreshTokens.FirstOrDefault(x => x.RefreshToken == req.RefreshToken && x.Expiration > DateTime.UtcNow);
+        var validRefreshToken = userRefreshTokens.FirstOrDefault(x => 
+                x.RefreshToken == req.RefreshToken
+                && x.ExpiresAt > DateTime.UtcNow
+                && x.RevokedAt == null);
         
         if (validRefreshToken is null)
         {
@@ -48,7 +51,7 @@ internal class RefreshEndpoint(TokenManager tokenManager, UserManager<ApiUser> u
             return;
         }
 
-        validRefreshToken.Expiration = DateTime.UtcNow.AddDays(7);
+        validRefreshToken.ExpiresAt = DateTime.UtcNow.AddDays(7);
         var token = await _tokenManager.GenerateToken(user);
 
         await _userManager.UpdateAsync(user);

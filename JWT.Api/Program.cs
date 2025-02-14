@@ -42,7 +42,10 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.Services.GetRequiredService<IdentityContext>().Database.Migrate();
+    using (var scope = app.Services.CreateScope())
+    {
+        scope.ServiceProvider.GetRequiredService<IdentityContext>().Database.Migrate();
+    }
 }
 
 app.UseAuthentication();

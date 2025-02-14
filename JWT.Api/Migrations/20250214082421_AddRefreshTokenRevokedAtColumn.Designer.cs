@@ -4,6 +4,7 @@ using JWT.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JWT.Api.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    partial class IdentityContextModelSnapshot : ModelSnapshot
+    [Migration("20250214082421_AddRefreshTokenRevokedAtColumn")]
+    partial class AddRefreshTokenRevokedAtColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,8 +105,7 @@ namespace JWT.Api.Migrations
                     b.Property<string>("RefreshToken")
                         .IsRequired()
                         .HasMaxLength(88)
-                        .HasColumnType("nchar(88)")
-                        .IsFixedLength();
+                        .HasColumnType("nvarchar(88)");
 
                     b.Property<DateTime?>("RevokedAt")
                         .HasColumnType("datetime2");
@@ -111,8 +113,6 @@ namespace JWT.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApiUserId");
-
-                    b.HasIndex("RefreshToken");
 
                     b.ToTable("RefreshTokens", (string)null);
                 });
