@@ -18,7 +18,7 @@ internal class RegisterEndpoint(UserManager<ApiUser> userManager) : Endpoint<Reg
     {
         var user = new ApiUser
         {
-            UserName = req.Email,
+            UserName = req.Username,
             Email = req.Email,
             EmailConfirmed = true
         };
