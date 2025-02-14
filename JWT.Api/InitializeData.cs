@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace JWT.Api;
 
@@ -11,8 +12,8 @@ internal static class InitializeData
 
         string[] roleNames = 
         { 
-            Roles.Admin, 
-            Roles.User
+            AppRoles.Admin, 
+            AppRoles.User
         };
 
         foreach (var roleName in roleNames)
@@ -34,14 +35,14 @@ internal static class InitializeData
         var existingUser = await userManager.FindByEmailAsync(user.Email);
         if (existingUser != null)
         {
-            await AddToRole(userManager, existingUser, Roles.Admin);
+            await AddToRole(userManager, existingUser, AppRoles.Admin);
             return;
         }
 
         var seedResult = await userManager.CreateAsync(user, "Password123!");
         if (seedResult.Succeeded)
         {
-            await AddToRole(userManager, user, Roles.Admin);
+            await AddToRole(userManager, user, AppRoles.Admin);
         }
     }
 
@@ -62,7 +63,7 @@ internal static class InitializeData
             var existingUser = await userManager.FindByEmailAsync(user.Email!);
             if (existingUser != null)
             {
-                await AddToRole(userManager, existingUser, Roles.User);
+                await AddToRole(userManager, existingUser, AppRoles.User);
                 continue;
             }
 
@@ -70,7 +71,18 @@ internal static class InitializeData
 
             if (seedResult.Succeeded)
             {
-                await AddToRole(userManager, user, Roles.User);
+                await AddToRole(userManager, user, AppRoles.User);
+            }
+
+        }
+
+        var willturner = await userManager.FindByNameAsync("willturner");
+        if (willturner != null)
+        {
+            var existingClaims = await userManager.GetClaimsAsync(willturner);
+            if (!existingClaims.Any(x => x.Type == AppClaims.CanSuspend))
+            {
+                await userManager.AddClaimAsync(willturner, new Claim(AppClaims.CanSuspend, string.Empty));
             }
         }
     }

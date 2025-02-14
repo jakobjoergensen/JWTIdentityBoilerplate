@@ -21,7 +21,7 @@ builder.Services
 
 builder.Services.AddScoped<TokenManager>();
 
-builder.Services.AddAuthorization(Policies.SetPolicies);
+builder.Services.AddAuthorization(AppPolicies.SetPolicies);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(x =>
@@ -63,6 +63,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseAuthentication();
+app.UseMiddleware<AccountStatusMiddleware>();
+app.UseMiddleware<ClaimsMiddleware>();
 app.UseAuthorization();
 
 app.UseFastEndpoints();

@@ -14,7 +14,7 @@ internal class RevokeEndpoint(IdentityContext identityContext) : Endpoint<Revoke
     public override void Configure()
     {
         Delete("/Revoke/{Id}");
-        Roles(Api.Roles.Admin);
+        Roles(Api.AppRoles.Admin);
     }
 
     public override async Task HandleAsync(RevokeRequest req, CancellationToken ct)

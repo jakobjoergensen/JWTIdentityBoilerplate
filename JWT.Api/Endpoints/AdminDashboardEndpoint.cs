@@ -11,7 +11,7 @@ internal class AdminDashboardEndpoint : EndpointWithoutRequest
     public override void Configure()
     {
         Get("/AdminDashboard");
-        Policies(Api.Policies.IsAdmin);
+        Policies(AppPolicies.IsAdmin);
     }
 
     public override async Task HandleAsync(CancellationToken ct)
