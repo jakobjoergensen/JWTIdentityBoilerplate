@@ -1,7 +1,6 @@
 ﻿using FastEndpoints;
 using JWT.Api.Endpoints.Dtos;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace JWT.Api.Endpoints;
@@ -18,7 +17,7 @@ internal class LoginEndpoint(TokenManager tokenManager, UserManager<ApiUser> use
 
     public override async Task HandleAsync(LoginRequest req, CancellationToken ct)
     {
-        var user = await _userManager.FindByNameAsync(req.Email);
+        var user = await FindUser(req.Email, req.Username);
 
         if (user == null || !await _userManager.CheckPasswordAsync(user, req.Password))
         {
@@ -43,5 +42,21 @@ internal class LoginEndpoint(TokenManager tokenManager, UserManager<ApiUser> use
             RefreshToken: refreshToken);
 
         await SendOkAsync(loginResponse, ct);
+    }
+
+
+    private async Task<ApiUser?> FindUser(string? email, string? username)
+    {
+        if (!string.IsNullOrEmpty(email))
+        {
+            return await _userManager.FindByEmailAsync(email);
+        }
+
+        if (!string.IsNullOrEmpty(username))
+        {
+            return await _userManager.FindByNameAsync(username);
+        }
+
+        return null;
     }
 }
