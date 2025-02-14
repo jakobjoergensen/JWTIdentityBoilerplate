@@ -10,6 +10,7 @@ internal class RevokeEndpoint(IdentityContext identityContext) : Endpoint<Revoke
     public override void Configure()
     {
         Delete("/Revoke/{Id}");
+        Roles(RoleNames.Admin);
     }
 
     public override async Task HandleAsync(RevokeRequest req, CancellationToken ct)

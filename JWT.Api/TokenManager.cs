@@ -2,15 +2,17 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace JWT.Api;
 
-internal class TokenManager(IConfiguration configuration)
+internal class TokenManager(IConfiguration configuration, UserManager<ApiUser> userManager)
 {
     private readonly IConfiguration _configuration = configuration;
+    private readonly UserManager<ApiUser> _userManager = userManager;
 
-    public Task<JwtSecurityToken> GenerateToken(ApiUser user)
+    public async Task<JwtSecurityToken> GenerateToken(ApiUser user)
     {
         var key = Encoding.UTF8.GetBytes(Guard.Against.NullOrEmpty(_configuration.GetValue<string>("TokenKey")));
 
@@ -20,6 +22,10 @@ internal class TokenManager(IConfiguration configuration)
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
+        // Add roles as claims
+        var userRoles = await _userManager.GetRolesAsync(user);
+        claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+
         var token = new JwtSecurityToken(
             issuer: Guard.Against.NullOrEmpty(_configuration.GetValue<string>("Issuer")),
             audience: Guard.Against.NullOrEmpty(_configuration.GetValue<string>("Audience")),
@@ -28,7 +34,7 @@ internal class TokenManager(IConfiguration configuration)
             signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
         );
 
-        return Task.FromResult(token);
+        return token;
     }
     
     public string GenerateRefreshToken()

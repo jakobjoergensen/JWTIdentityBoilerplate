@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +15,11 @@ var connectionString = Guard.Against.NullOrEmpty(builder.Configuration.GetConnec
 builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connectionString));
 builder.Services
     .AddIdentityCore<ApiUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>() // Add role support
+    .AddRoleManager<RoleManager<IdentityRole>>() // Registers RoleManager
     .AddEntityFrameworkStores<IdentityContext>();
 
-builder.Services.AddSingleton<TokenManager>();
+builder.Services.AddScoped<TokenManager>();
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -40,11 +43,21 @@ builder.Services.SwaggerDocument();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    using (var scope = app.Services.CreateScope())
+    var services = scope.ServiceProvider;
+    
+    // Seed roles
+    await InitializeData.SeedRoles(services);
+    
+    if (app.Environment.IsDevelopment())
     {
-        scope.ServiceProvider.GetRequiredService<IdentityContext>().Database.Migrate();
+        // Apply database migrations
+        services.GetRequiredService<IdentityContext>().Database.Migrate();
+
+        // Seed users
+        await InitializeData.SeedAdminUser(services);
+        await InitializeData.SeedUsers(services);
     }
 }
 

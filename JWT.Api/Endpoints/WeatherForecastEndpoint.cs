@@ -8,6 +8,7 @@ internal class WeatherForecastEndpoint : EndpointWithoutRequest
     public override void Configure()
     {
         Get("/WeatherForecast");
+        Roles(RoleNames.Admin, RoleNames.User);
     }
 
     public override async Task HandleAsync(CancellationToken ct)
