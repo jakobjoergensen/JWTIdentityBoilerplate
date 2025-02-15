@@ -1,22 +1,22 @@
 ﻿volumes:
-  sqlserver_identity:
+  sqlserver:
     
 services:
-  jwt.api:
+  api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-    image: jwt.api
+    image: api
     ports:
       - "8080:8080"
     build:
       args:
         ENVIRONMENT: Development
       context: .
-      dockerfile: JWT.Api/Dockerfile
+      dockerfile: JWTIdentityBoilerplate.Api/Dockerfile
     depends_on:
-      - sql.identity
+      - sql
       
-  sql.identity:
+  sql:
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
       - "1433:1433"
@@ -24,7 +24,7 @@ services:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=Passw0rd!
     volumes:
-      - sqlserver_identity:/var/opt/mssql
+      - sqlserver:/var/opt/mssql
     restart: always
     
     

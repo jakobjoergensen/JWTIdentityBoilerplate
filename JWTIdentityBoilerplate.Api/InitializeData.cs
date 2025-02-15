@@ -1,13 +1,37 @@
 ﻿using JWTIdentityBoilerplate.Api.Constants;
-using JWTIdentityBoilerplate.Api.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace JWTIdentityBoilerplate.Api;
 
 internal static class InitializeData
 {
-    public static async Task SeedRoles(IServiceProvider serviceProvider)
+    public static async Task SeedInitialData(this WebApplication webApplication)
+    {
+        using (var scope = webApplication.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+
+            // Apply database migrations
+            if (webApplication.Environment.IsDevelopment())
+            {
+                services.GetRequiredService<IdentityContext>().Database.Migrate();
+            }
+            
+            // Seed roles
+            await SeedRoles(services);
+
+            // Seed users
+            if (webApplication.Environment.IsDevelopment())
+            {
+                await SeedAdminUser(services);
+                await SeedUsers(services);
+            }
+        }
+    }
+
+    private static async Task SeedRoles(IServiceProvider serviceProvider)
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = serviceProvider.GetRequiredService<UserManager<ApiUser>>();
@@ -28,7 +52,7 @@ internal static class InitializeData
     }
 
 
-    public static async Task SeedAdminUser(IServiceProvider serviceProvider)
+    private static async Task SeedAdminUser(IServiceProvider serviceProvider)
     {
         var userManager = serviceProvider.GetRequiredService<UserManager<ApiUser>>();
 
@@ -49,7 +73,7 @@ internal static class InitializeData
     }
 
 
-    public static async Task SeedUsers(IServiceProvider serviceProvider)
+    private static async Task SeedUsers(IServiceProvider serviceProvider)
     {
         var userManager = serviceProvider.GetRequiredService<UserManager<ApiUser>>();
 

@@ -7,7 +7,6 @@ using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Identity;
 using JWTIdentityBoilerplate.Api;
 using JWTIdentityBoilerplate.Api.Middlewares;
-using JWTIdentityBoilerplate.Api.Data;
 using JWTIdentityBoilerplate.Api.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMemoryCache();
 
 var tokenKey = Guard.Against.NullOrEmpty(builder.Configuration.GetValue<string>("TokenKey"));
-var connectionString = Guard.Against.NullOrEmpty(builder.Configuration.GetConnectionString("IdentityContext"));
+var connectionString = Guard.Against.NullOrEmpty(builder.Configuration.GetConnectionString("Database"));
 
 builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connectionString));
 builder.Services
@@ -29,9 +28,10 @@ builder.Services
         options.Password.RequireLowercase = true;
         options.Lockout.MaxFailedAccessAttempts = 5;
         options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+        options.Lockout.AllowedForNewUsers = true;
     })
-    .AddRoles<IdentityRole>() // Add role support
-    .AddRoleManager<RoleManager<IdentityRole>>() // Registers RoleManager
+    .AddRoles<IdentityRole>()
+    .AddRoleManager<RoleManager<IdentityRole>>()
     .AddEntityFrameworkStores<IdentityContext>();
 
 builder.Services.AddScoped<TokenManager>();
@@ -60,25 +60,9 @@ builder.Services.SwaggerDocument();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    
-    // Seed roles
-    await InitializeData.SeedRoles(services);
-    
-    if (app.Environment.IsDevelopment())
-    {
-        // Apply database migrations
-        services.GetRequiredService<IdentityContext>().Database.Migrate();
+await app.SeedInitialData();
 
-        // Seed users
-        await InitializeData.SeedAdminUser(services);
-        await InitializeData.SeedUsers(services);
-    }
-}
-
-// Order is important!
+// Order is important
 app.UseAuthentication();
 app.UseMiddleware<AccountStatusMiddleware>(); // Checks for suspended account
 app.UseMiddleware<ClaimsMiddleware>(); // Adds all the user claims from the database to the context
