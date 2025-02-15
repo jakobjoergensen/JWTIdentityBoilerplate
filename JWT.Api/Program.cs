@@ -11,6 +11,8 @@ using JWT.Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddMemoryCache();
+
 var tokenKey = Guard.Against.NullOrEmpty(builder.Configuration.GetValue<string>("TokenKey"));
 var connectionString = Guard.Against.NullOrEmpty(builder.Configuration.GetConnectionString("IdentityContext"));
 
