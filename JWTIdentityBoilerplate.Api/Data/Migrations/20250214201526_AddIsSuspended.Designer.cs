@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace JWTIdentityBoilerplate.Api.Migrations
+namespace JWTIdentityBoilerplate.Api.Data.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20250214085337_AddIndexOnRefreshTokenColumn")]
-    partial class AddIndexOnRefreshTokenColumn
+    [Migration("20250214201526_AddIsSuspended")]
+    partial class AddIsSuspended
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,6 +42,9 @@ namespace JWTIdentityBoilerplate.Api.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSuspended")
                         .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")

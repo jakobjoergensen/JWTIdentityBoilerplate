@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace JWTIdentityBoilerplate.Api.Migrations
+namespace JWTIdentityBoilerplate.Api.Data.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20241114215306_AddRefreshTokenTable")]
-    partial class AddRefreshTokenTable
+    [Migration("20241114210706_Intitial")]
+    partial class Intitial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -88,30 +88,6 @@ namespace JWTIdentityBoilerplate.Api.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("JWT.Api.Areas.Identity.Data.JWT.RefreshTokens", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ApiUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("Expiration")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RefreshToken")
-                        .IsRequired()
-                        .HasMaxLength(88)
-                        .HasColumnType("nvarchar(88)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApiUserId");
-
-                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -247,13 +223,6 @@ namespace JWTIdentityBoilerplate.Api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("JWT.Api.Areas.Identity.Data.JWT.RefreshTokens", b =>
-                {
-                    b.HasOne("JWT.Api.Areas.Identity.Data.JWT.ApiUser", null)
-                        .WithMany("RefreshTokens")
-                        .HasForeignKey("ApiUserId");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -303,11 +272,6 @@ namespace JWTIdentityBoilerplate.Api.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("JWT.Api.Areas.Identity.Data.JWT.ApiUser", b =>
-                {
-                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

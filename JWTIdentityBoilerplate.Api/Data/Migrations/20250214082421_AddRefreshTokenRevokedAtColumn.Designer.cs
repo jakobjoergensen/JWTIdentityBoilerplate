@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace JWTIdentityBoilerplate.Api.Migrations
+namespace JWTIdentityBoilerplate.Api.Data.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20250214201526_AddIsSuspended")]
-    partial class AddIsSuspended
+    [Migration("20250214082421_AddRefreshTokenRevokedAtColumn")]
+    partial class AddRefreshTokenRevokedAtColumn
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,9 +42,6 @@ namespace JWTIdentityBoilerplate.Api.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSuspended")
                         .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
@@ -108,8 +105,7 @@ namespace JWTIdentityBoilerplate.Api.Migrations
                     b.Property<string>("RefreshToken")
                         .IsRequired()
                         .HasMaxLength(88)
-                        .HasColumnType("nchar(88)")
-                        .IsFixedLength();
+                        .HasColumnType("nvarchar(88)");
 
                     b.Property<DateTime?>("RevokedAt")
                         .HasColumnType("datetime2");
@@ -117,8 +113,6 @@ namespace JWTIdentityBoilerplate.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApiUserId");
-
-                    b.HasIndex("RefreshToken");
 
                     b.ToTable("RefreshTokens", (string)null);
                 });

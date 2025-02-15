@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace JWTIdentityBoilerplate.Api.Migrations
+namespace JWTIdentityBoilerplate.Api.Data.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20250214082421_AddRefreshTokenRevokedAtColumn")]
-    partial class AddRefreshTokenRevokedAtColumn
+    [Migration("20250214085337_AddIndexOnRefreshTokenColumn")]
+    partial class AddIndexOnRefreshTokenColumn
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -105,7 +105,8 @@ namespace JWTIdentityBoilerplate.Api.Migrations
                     b.Property<string>("RefreshToken")
                         .IsRequired()
                         .HasMaxLength(88)
-                        .HasColumnType("nvarchar(88)");
+                        .HasColumnType("nchar(88)")
+                        .IsFixedLength();
 
                     b.Property<DateTime?>("RevokedAt")
                         .HasColumnType("datetime2");
@@ -113,6 +114,8 @@ namespace JWTIdentityBoilerplate.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApiUserId");
+
+                    b.HasIndex("RefreshToken");
 
                     b.ToTable("RefreshTokens", (string)null);
                 });

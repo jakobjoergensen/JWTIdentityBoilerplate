@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace JWTIdentityBoilerplate.Api.Migrations
+namespace JWTIdentityBoilerplate.Api.Data.Migrations
 {
     /// <inheritdoc />
     public partial class AddIsSuspended : Migration
