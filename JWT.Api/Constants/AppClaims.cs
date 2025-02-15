@@ -1,4 +1,4 @@
-﻿namespace JWT.Api;
+﻿namespace JWT.Api.Constants;
 
 internal static class AppClaims
 {

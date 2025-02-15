@@ -1,4 +1,5 @@
 ﻿using FastEndpoints;
+using JWT.Api.Constants;
 using JWT.Api.Endpoints.Dtos;
 
 namespace JWT.Api.Endpoints;

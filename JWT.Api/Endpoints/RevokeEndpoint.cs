@@ -1,4 +1,5 @@
 ﻿using FastEndpoints;
+using JWT.Api.Constants;
 using JWT.Api.Endpoints.Dtos;
 
 namespace JWT.Api.Endpoints;
@@ -14,7 +15,7 @@ internal class RevokeEndpoint(IdentityContext identityContext) : Endpoint<Revoke
     public override void Configure()
     {
         Delete("/Revoke/{Id}");
-        Roles(Api.AppRoles.Admin);
+        Roles(AppRoles.Admin);
     }
 
     public override async Task HandleAsync(RevokeRequest req, CancellationToken ct)
