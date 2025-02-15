@@ -1,6 +1,0 @@
-﻿namespace JWT.Api.Constants;
-
-internal static class AppClaims
-{
-    public const string CanSuspend = "CanSuspend";
-}
